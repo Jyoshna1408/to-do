@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TODO App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📝 My TODO App</h1>
+
+    <form action="/add" method="POST" class="add-form">
+      <input type="text" name="task" placeholder="Enter a new task..." required />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <ul id="todo-list"></ul>
+  </div>
+
+  <script>
+    async function loadTodos() {
+      const res = await fetch('/todos');
+      const todos = await res.json();
+      const list = document.getElementById('todo-list');
+      list.innerHTML = '';
+      todos.forEach(todo => {
+        list.innerHTML += `
+          <li class="${todo.done ? 'done' : ''}">
+            <span>${todo.task}</span>
+            <div>
+              <form action="/done/${todo.id}" method="POST" style="display:inline">
+                <button type="submit">${todo.done ? '↩ Undo' : '✔ Done'}</button>
+              </form>
+              <form action="/delete/${todo.id}" method="POST" style="display:inline">
+                <button type="submit" class="delete">🗑 Delete</button>
+              </form>
+            </div>
+          </li>`;
+      });
+    }
+    loadTodos();
+  </script>
+</body>
+</html>
